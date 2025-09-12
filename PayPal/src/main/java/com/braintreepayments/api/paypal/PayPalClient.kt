@@ -3,6 +3,7 @@ package com.braintreepayments.api.paypal
 import android.content.Context
 import android.net.Uri
 import android.text.TextUtils
+import android.util.Log
 import androidx.core.net.toUri
 import com.braintreepayments.api.BrowserSwitchOptions
 import com.braintreepayments.api.LaunchType
@@ -95,6 +96,10 @@ class PayPalClient internal constructor(
         shopperSessionId = payPalRequest.shopperSessionId
         isVaultRequest = payPalRequest is PayPalVaultRequest
         analyticsParamRepository.didEnablePayPalAppSwitch = payPalRequest.enablePayPalAppSwitch
+
+        if (payPalRequest is PayPalCheckoutRequest) {
+            analyticsParamRepository.merchantPassedUserAction = userActionString(payPalRequest)
+        }
 
         braintreeClient.getConfiguration { configuration: Configuration?, error: Exception? ->
             val analyticsEventParams = AnalyticsEventParams(
@@ -386,6 +391,12 @@ class PayPalClient internal constructor(
         braintreeClient.sendAnalyticsEvent(PayPalAnalytics.TOKENIZATION_SUCCEEDED, analyticsEventParams)
         callback.onPayPalResult(success)
         analyticsParamRepository.reset()
+    }
+
+    private fun userActionString(payPalRequest: PayPalCheckoutRequest): String = when (payPalRequest.userAction) {
+        PayPalPaymentUserAction.USER_ACTION_DEFAULT -> "continue"
+        PayPalPaymentUserAction.USER_ACTION_COMMIT -> "pay"
+        null -> "default"
     }
 
     companion object {

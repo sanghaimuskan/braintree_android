@@ -72,7 +72,7 @@ class PayPalCheckoutRequest @JvmOverloads constructor(
     val amount: String,
     override val hasUserLocationConsent: Boolean,
     var intent: PayPalPaymentIntent = PayPalPaymentIntent.AUTHORIZE,
-    var userAction: PayPalPaymentUserAction = PayPalPaymentUserAction.USER_ACTION_DEFAULT,
+    var userAction: PayPalPaymentUserAction? = null,
     var currencyCode: String? = null,
     var shouldRequestBillingAgreement: Boolean = false,
     var shouldOfferPayLater: Boolean = false,
@@ -194,8 +194,12 @@ class PayPalCheckoutRequest @JvmOverloads constructor(
             experienceProfile.put(LOCALE_CODE_KEY, localeCode)
         }
 
+        if (userAction == null) {
+            userAction = PayPalPaymentUserAction.USER_ACTION_DEFAULT
+        }
+
         if (userAction != PayPalPaymentUserAction.USER_ACTION_DEFAULT) {
-            experienceProfile.put(USER_ACTION_KEY, userAction.stringValue)
+            experienceProfile.put(USER_ACTION_KEY, userAction?.stringValue)
         }
 
         shippingAddressOverride?.let {
