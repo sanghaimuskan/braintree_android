@@ -396,7 +396,7 @@ class PayPalClient internal constructor(
     private fun userActionString(payPalRequest: PayPalCheckoutRequest): String = when (payPalRequest.userAction) {
         PayPalPaymentUserAction.USER_ACTION_DEFAULT -> "continue"
         PayPalPaymentUserAction.USER_ACTION_COMMIT -> "pay"
-        null -> "default"
+        null -> "none"
     }
 
     companion object {
