@@ -358,4 +358,73 @@ class PayPalCheckoutRequestUnitTest {
 
         assertFalse(requestBody.contains("contact_preference"))
     }
+
+    @Test
+    @Throws(JSONException::class)
+    fun `creates requestBody and does not set userAction when it is null`() {
+        val request = PayPalCheckoutRequest("1.00", true).apply {
+            userAction = null
+        }
+
+        val requestBody = request.createRequestBody(
+            configuration = mockk<Configuration>(relaxed = true),
+            authorization = mockk<Authorization>(relaxed = true),
+            successUrl = "success_url",
+            cancelUrl = "cancel_url",
+            appLink = null
+        )
+
+        val jsonObject = JSONObject(requestBody)
+        assertTrue(jsonObject.has("experience_profile"))
+
+        val experienceProfile = jsonObject.getJSONObject("experience_profile")
+        assertFalse(experienceProfile.has("user_action"))
+    }
+
+
+    @Test
+    @Throws(JSONException::class)
+    fun `creates requestBody and does not set userAction when it is USER_ACTION_DEFAULT`() {
+        val request = PayPalCheckoutRequest("1.00", true).apply {
+            userAction = PayPalPaymentUserAction.USER_ACTION_DEFAULT
+        }
+
+        val requestBody = request.createRequestBody(
+            configuration = mockk<Configuration>(relaxed = true),
+            authorization = mockk<Authorization>(relaxed = true),
+            successUrl = "success_url",
+            cancelUrl = "cancel_url",
+            appLink = null
+        )
+
+        val jsonObject = JSONObject(requestBody)
+        assertTrue(jsonObject.has("experience_profile"))
+
+        val experienceProfile = jsonObject.getJSONObject("experience_profile")
+        assertFalse(experienceProfile.has("user_action"))
+    }
+
+    @Test
+    @Throws(JSONException::class)
+    fun `creates requestBody and sets userAction when it is USER_ACTION_COMMIT`() {
+        val request = PayPalCheckoutRequest("1.00", true).apply {
+            userAction = PayPalPaymentUserAction.USER_ACTION_COMMIT
+        }
+
+        val requestBody = request.createRequestBody(
+            configuration = mockk<Configuration>(relaxed = true),
+            authorization = mockk<Authorization>(relaxed = true),
+            successUrl = "success_url",
+            cancelUrl = "cancel_url",
+            appLink = null
+        )
+
+        val jsonObject = JSONObject(requestBody)
+        assertTrue(jsonObject.has("experience_profile"))
+
+        val experienceProfile = jsonObject.getJSONObject("experience_profile")
+        assertTrue(experienceProfile.has("user_action"))
+    }
+
+
 }
