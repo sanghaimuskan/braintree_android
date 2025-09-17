@@ -393,9 +393,9 @@ class PayPalClient internal constructor(
     }
 
     private fun userActionString(payPalRequest: PayPalCheckoutRequest): String = when (payPalRequest.userAction) {
-        PayPalPaymentUserAction.USER_ACTION_DEFAULT -> "continue"
-        PayPalPaymentUserAction.USER_ACTION_COMMIT -> "pay"
-        null -> "none"
+        PayPalPaymentUserAction.USER_ACTION_DEFAULT -> CONTINUE
+        PayPalPaymentUserAction.USER_ACTION_COMMIT -> PAY
+        null -> NONE
     }
 
     companion object {
@@ -404,5 +404,9 @@ class PayPalClient internal constructor(
             "for more information."
 
         internal const val BROWSER_SWITCH_EXCEPTION_MESSAGE = "The response contained inconsistent data."
+        internal const val CONTINUE = "continue"
+        internal const val PAY = "pay"
+        internal const val NONE = "none"
+
     }
 }
